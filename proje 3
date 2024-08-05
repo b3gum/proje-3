@@ -1,0 +1,160 @@
+class Item:
+    def __init__(self, item_id, name, quantity, price):
+        """
+        Item sınıfı, envanterdeki bir öğeyi temsil eder.
+        :param item_id: Öğenin benzersiz kimliği.
+        :param name: Öğenin adı.
+        :param quantity: Öğenin miktarı.
+        :param price: Öğenin fiyatı.
+        """
+        self.item_id = item_id
+        self.name = name
+        self.quantity = quantity
+        self.price = price
+
+    def update_quantity(self, quantity):
+        """
+        Öğenin miktarını günceller.
+        :param quantity: Yeni miktar.
+        """
+        self.quantity = quantity
+
+    def update_price(self, price):
+        """
+        Öğenin fiyatını günceller.
+        :param price: Yeni fiyat.
+        """
+        self.price = price
+
+    def __str__(self):
+        """
+        Öğenin bilgilerini string formatında döner.
+        """
+        return f"ID: {self.item_id}, Name: {self.name}, Quantity: {self.quantity}, Price: {self.price}"
+
+
+class Inventory:
+    def __init__(self):
+        """
+        Inventory sınıfı, envanteri yönetir ve öğe ekleme, güncelleme, kaldırma işlemlerini yapar.
+        """
+        self.items = {}
+
+    def add_item(self, item):
+        """
+        Envantere yeni bir öğe ekler.
+        :param item: Eklenmek istenen öğe.
+        """
+        if item.item_id in self.items:
+            print("Item already exists.")
+        else:
+            self.items[item.item_id] = item
+
+    def update_item(self, item_id, quantity=None, price=None):
+        """
+        Envanterdeki bir öğeyi günceller.
+        :param item_id: Güncellenecek öğenin kimliği.
+        :param quantity: Yeni miktar (opsiyonel).
+        :param price: Yeni fiyat (opsiyonel).
+        """
+        if item_id in self.items:
+            if quantity is not None:
+                self.items[item_id].update_quantity(quantity)
+            if price is not None:
+                self.items[item_id].update_price(price)
+        else:
+            print("Item not found.")
+
+    def remove_item(self, item_id):
+        """
+        Envanterden bir öğeyi kaldırır.
+        :param item_id: Kaldırılacak öğenin kimliği.
+        """
+        if item_id in self.items:
+            del self.items[item_id]
+        else:
+            print("Item not found.")
+
+    def list_items(self):
+        """
+        Envanterdeki tüm öğeleri listeler.
+        """
+        if not self.items:
+            print("Envanter boş.")
+        for item in self.items.values():
+            print(item)
+from inventory import Item, Inventory
+
+def main():
+    """
+    Kullanıcı etkileşimi için ana fonksiyon.
+    """
+    inventory = Inventory()
+
+    while True:
+        print("\nEnvanter Yönetim Sistemi")
+        print("1. Öğe Ekle")
+        print("2. Öğe Güncelle")
+        print("3. Öğe Kaldır")
+        print("4. Tüm Öğeleri Listele")
+        print("5. Çıkış")
+
+        choice = input("Seçiminizi yapın: ")
+
+        if choice == '1':
+            item_id = input("Öğe ID: ")
+            name = input("Öğe Adı: ")
+            quantity = int(input("Miktar: "))
+            price = float(input("Fiyat: "))
+            item = Item(item_id, name, quantity, price)
+            inventory.add_item(item)
+        elif choice == '2':
+            item_id = input("Güncellenecek Öğe ID: ")
+            quantity = input("Yeni Miktar (boş bırakabilirsiniz): ")
+            price = input("Yeni Fiyat (boş bırakabilirsiniz): ")
+            quantity = int(quantity) if quantity else None
+            price = float(price) if price else None
+            inventory.update_item(item_id, quantity, price)
+        elif choice == '3':
+            item_id = input("Kaldırılacak Öğe ID: ")
+            inventory.remove_item(item_id)
+        elif choice == '4':
+            inventory.list_items()
+        elif choice == '5':
+            break
+        else:
+            print("Geçersiz seçenek. Tekrar deneyin.")
+
+if __name__ == "__main__":
+    main()
+from inventory import Item, Inventory
+
+def test_inventory():
+    """
+    Envanter yönetim sistemini test eden fonksiyon.
+    """
+    inventory = Inventory()
+
+    # Öğe ekleme
+    item1 = Item("1", "Kalem", 100, 1.5)
+    item2 = Item("2", "Silgi", 50, 0.75)
+    inventory.add_item(item1)
+    inventory.add_item(item2)
+    
+    assert len(inventory.items) == 2
+    
+    # Öğe güncelleme
+    inventory.update_item("1", quantity=120)
+    assert inventory.items["1"].quantity == 120
+    
+    # Öğe kaldırma
+    inventory.remove_item("2")
+    assert len(inventory.items) == 1
+
+    # Öğeleri listeleme
+    inventory.list_items()
+
+    print("Tüm testler başarılı.")
+
+if __name__ == "__main__":
+    test_inventory()
